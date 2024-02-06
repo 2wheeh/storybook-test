@@ -33,8 +33,6 @@ jobs:
       - name: Build and deploy Storybook to GitHub Pages
         uses: bitovi/github-actions-storybook-to-github-pages@v1.0.2
         with:
-          install_command: npm ci
-          build_command: npm run build-storybook
           path: storybook-static
           checkout: false # default: true
 
@@ -42,7 +40,7 @@ jobs:
         id: format_comment_message
         uses: actions/github-script@v7
         with:
-          # github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.TOKEN}}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
