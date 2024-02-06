@@ -40,11 +40,10 @@ jobs:
 
       - name: Format comment message
         id: format_comment_message
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          # github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-
             const deployURL = 'https://2wheeh.github.io/storybook-test/';
             const comments = [
               `### Storybook on Github Pages`,
@@ -56,6 +55,6 @@ jobs:
       - name: comment PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          # GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           message: |
             ${{ steps.format_comment_message.outputs.comment}}[${{ 'https://2wheeh.github.io/storybook-test/' }}](${{ 'https://2wheeh.github.io/storybook-test/' }})
