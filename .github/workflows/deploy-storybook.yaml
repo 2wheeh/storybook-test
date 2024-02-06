@@ -19,14 +19,17 @@ jobs:
     # Job steps
     steps:
       - uses: actions/checkout@v4
+
       - name: Read .nvmrc
         run: |
           echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
         id: nvm
+
       - name: Use Node.js ${{ steps.nvm.outputs.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
+
       - name: Build and deploy Storybook to GitHub Pages
         uses: bitovi/github-actions-storybook-to-github-pages@v1.0.2
         with:
@@ -35,3 +38,24 @@ jobs:
           path: storybook-static
           checkout: false # default: true
 
+      - name: Format comment message
+        id: format_comment_message
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+
+            const deployURL = 'https://2wheeh.github.io/storybook-test/';
+            const comments = [
+              `### Storybook on Github Pages`,
+              `**check preview here** :`
+            ].join('\n');
+
+            core.setOutput('comment', comments);
+
+      - name: comment PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          message: |
+            ${{ steps.format_comment_message.outputs.comment}}[${{ 'https://2wheeh.github.io/storybook-test/' }}](${{ 'https://2wheeh.github.io/storybook-test/' }})
