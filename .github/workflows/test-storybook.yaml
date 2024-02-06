@@ -6,7 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-
 jobs:
   test:
     timeout-minutes: 60
@@ -32,7 +31,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Build Storybook
-        run: yarn build-storybook --quiet
+        run: npm run build-storybook --quiet
 
       - name: Serve Storybook and run tests
         run: |
