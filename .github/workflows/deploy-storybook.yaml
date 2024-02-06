@@ -38,23 +38,15 @@ jobs:
           path: storybook-static
           checkout: false # default: true
 
-      - name: Format comment message
+      - name: Comment
         id: format_comment_message
         uses: actions/github-script@v7
         with:
           # github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const deployURL = 'https://2wheeh.github.io/storybook-test/';
-            const comments = [
-              `### Storybook on Github Pages`,
-              `**check preview here** :`
-            ].join('\n');
-
-            core.setOutput('comment', comments);
-
-      - name: comment PR
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          # GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          message: |
-            ${{ steps.format_comment_message.outputs.comment}}[${{ 'https://2wheeh.github.io/storybook-test/' }}](${{ 'https://2wheeh.github.io/storybook-test/' }})
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Storybook on GitHub Pages: ['https://2wheeh.github.io/storybook-test/']('https://2wheeh.github.io/storybook-test/')'
+            })
