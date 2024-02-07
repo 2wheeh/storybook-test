@@ -34,22 +34,26 @@ jobs:
         run: |
           npm run build-storybook --quiet
 
-      - name: Deploy preview to Netlify
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: 'storybook-static'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy Storybook Preview'
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 1
-        id: preview
+      - name: Install Netlify
+        run: npm install netlify-cli --save-dev
 
-      - name: url ${{ steps.preview.outputs }}
+      - name: Deploy preview to Netlify
+        id: netlify_deploy
         run: |
-          ls
+          netlify deploy \
+            --dir storybook-static \
+            --site ${{ secrets.NETLIFY_SITE_ID }} \
+            --auth ${{ secrets.NETLIFY_API_TOKEN }} \
+            > deploy_output.txt
+
+      - name: Comment
+        id: url_preview
+        run: |
+          NETLIFY_PREVIEW_URL=$(cat deploy_output.txt | grep "Website draft URL: " | cut -d' ' -f4)
+          echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
+
+      - name: DEBUG=WILL BE REMOVED
+        run: echo ${{ steps.url_preview.outputs.NETLIFY_PREVIEW_URL }}
 
   test:
     timeout-minutes: 60
