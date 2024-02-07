@@ -45,6 +45,7 @@ jobs:
       - name: Build Storybook
         run: |
           npm run build-storybook --quiet
+          ls
           mv ./storybook-static ./build/storybook
 
       # - name: Upload
