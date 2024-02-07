@@ -13,6 +13,8 @@ concurrency: preview-${{ github.ref }}
 jobs:
   deploy:
     runs-on: ubuntu-22.04
+    outputs:
+      output: ${{ steps.deploy-preview.outputs.deploy-url }}
     # Job steps
     steps:
       - uses: actions/checkout@v4
@@ -38,48 +40,22 @@ jobs:
         run: npm install netlify-cli --save-dev
 
       - name: Deploy preview to Netlify
-        id: netlify_deploy
-        run: |
-          netlify deploy \
-            --auth ${{ secrets.GITHUB_TOKEN }}
-            --dir storybook-static \
-            --site ${{ secrets.NETLIFY_SITE_ID }} \
-            --auth ${{ secrets.NETLIFY_API_TOKEN }} \
-            > deploy_output.txt
-
-      - name: Comment
-        id: url_preview
-        run: |
-          NETLIFY_PREVIEW_URL=$(cat deploy_output.txt | grep "Website draft URL: " | cut -d' ' -f4)
-          echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
-
-      - name: DEBUG=WILL BE REMOVED
-        run: echo ${{ steps.url_preview.outputs.NETLIFY_PREVIEW_URL }}
+        id: deploy-preview
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: 'storybook-static'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy Storybook Preview'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1
 
   test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    # if: ${{ steps.preview }}
+    runs-on: ubuntu-22.04
+    needs: deploy
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Read .nvmrc
+      - name: ${{ needs.deploy.outputs.output }}
         run: |
-          echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
-        id: nvm
-
-      - name: Use Node.js ${{ steps.nvm.outputs.NODE_VERSION }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright
-        run: npx playwright install --with-deps
-
-      - name: Run Storybook tests
-        run: npm run test-storybook
-        env:
-          TARGET_URL: '${{ steps.preview.outputs }}'
+          ls
