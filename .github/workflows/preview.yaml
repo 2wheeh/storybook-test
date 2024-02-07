@@ -47,6 +47,10 @@ jobs:
         timeout-minutes: 1
         id: preview
 
+      - name: url ${{ steps.preview.outputs }}
+        run: |
+          ls
+
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
