@@ -41,6 +41,7 @@ jobs:
         id: netlify_deploy
         run: |
           netlify deploy \
+            --auth ${{ secrets.GITHUB_TOKEN }}
             --dir storybook-static \
             --site ${{ secrets.NETLIFY_SITE_ID }} \
             --auth ${{ secrets.NETLIFY_API_TOKEN }} \
