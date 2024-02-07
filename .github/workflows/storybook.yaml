@@ -36,9 +36,6 @@ jobs:
         run: |
           npm run build-storybook --quiet
 
-      - name: Install Netlify
-        run: npm install netlify-cli --save-dev
-
       - name: Deploy preview to Netlify
         id: deploy-preview
         uses: nwtgck/actions-netlify@v2.0
