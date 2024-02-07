@@ -54,7 +54,7 @@ jobs:
         uses: rossjrw/pr-preview-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          source-dir: ./storybook-static
+          # source-dir: ./storybook-static
 
       # - name: Comment
       #   id: format_comment_message
