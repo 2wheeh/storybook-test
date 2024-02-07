@@ -40,3 +40,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           source-dir: storybook-static
+          unbrella-dir: storybook-preview
+          preview-branch: main
