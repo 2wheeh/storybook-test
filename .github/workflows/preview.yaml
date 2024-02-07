@@ -43,12 +43,14 @@ jobs:
         run: npm ci
 
       - name: Build Storybook
-        run: npm run build-storybook --quiet
+        run: |
+          npm run build-storybook --quiet
+          mv ./storybook-static ./build/storybook
 
-      - name: Upload
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: storybook-static
+      # - name: Upload
+      #   uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: storybook-static
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
