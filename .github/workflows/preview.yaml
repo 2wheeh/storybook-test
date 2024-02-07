@@ -14,7 +14,7 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     outputs:
-      output: ${{ steps.deploy-preview.outputs.deploy-url }}
+      url: ${{ steps.deploy-preview.outputs.deploy-url }}
     # Job steps
     steps:
       - uses: actions/checkout@v4
@@ -56,6 +56,25 @@ jobs:
     runs-on: ubuntu-22.04
     needs: deploy
     steps:
-      - name: ${{ needs.deploy.outputs.output }}
+      - uses: actions/checkout@v4
+
+      - name: Read .nvmrc
         run: |
-          ls
+          echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+        id: nvm
+
+      - name: Use Node.js ${{ steps.nvm.outputs.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run Storybook tests
+        run: npm run test-storybook
+        env:
+          TARGET_URL: '${{ needs.deploy.outputs.url }}'
