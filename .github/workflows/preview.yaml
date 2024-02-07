@@ -33,12 +33,15 @@ jobs:
       - name: Build Storybook
         run: |
           npm run build-storybook --quiet
-          ls
 
-      - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1
+      - name: Deploy preview to Netlify
+        uses: nwtgck/actions-netlify@v2.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          source-dir: storybook-static
-          unbrella-dir: storybook-preview
-          preview-branch: main
+          publish-dir: 'storybook-static'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy Storybook Preview'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1
