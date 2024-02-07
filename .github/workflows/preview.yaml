@@ -46,7 +46,6 @@ jobs:
         run: |
           npm run build-storybook --quiet
           ls
-          mv ./storybook-static ./build/storybook
 
       # - name: Upload
       #   uses: actions/upload-pages-artifact@v3
@@ -57,7 +56,7 @@ jobs:
         uses: rossjrw/pr-preview-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # source-dir: ./storybook-static
+          source-dir: storybook-static
 
       # - name: Comment
       #   id: format_comment_message
