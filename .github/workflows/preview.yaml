@@ -47,7 +47,6 @@ jobs:
         timeout-minutes: 1
         id: preview
 
-jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
